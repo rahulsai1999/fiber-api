@@ -3,20 +3,13 @@ package main
 import (
 	"os"
 
-	"github.com/gofiber/fiber"
 	"github.com/joho/godotenv"
+	"github.com/rahulsai1999/fiber-api/service"
 )
 
 func main() {
 	godotenv.Load()
 	port := os.Getenv("PORT")
-	app := fiber.New(&fiber.Settings{
-		Prefork: true,
-	})
-
-	app.Get("/", func(ctx *fiber.Ctx) {
-		ctx.Send("Hello and Welcome")
-	})
-
+	app := service.Router()
 	app.Listen(port)
 }
