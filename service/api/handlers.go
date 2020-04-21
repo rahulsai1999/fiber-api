@@ -89,3 +89,49 @@ func InsertBlog(ctx *fiber.Ctx) {
 		})
 	}
 }
+
+// UpdateBlog -> Update blog completely
+func UpdateBlog(ctx *fiber.Ctx) {
+	id := ctx.Params("id")
+	title := ctx.Body("title")
+	author := ctx.Body("author")
+	body := ctx.Body("body")
+
+	docID, _ := primitive.ObjectIDFromHex(id)
+	blog := models.Blog{
+		Title:  title,
+		Author: author,
+		Body:   body,
+	}
+	update := bson.M{
+		"$set": blog,
+	}
+
+	filter := bson.M{"_id": docID}
+	result := models.Blog{}
+	err := collectionBlogs.FindOneAndUpdate(context.Background(), filter, update).Decode(&result)
+	if err != nil {
+		log.Fatal(err, blog)
+	} else {
+		ctx.Status(200).JSON(fiber.Map{
+			"updated_id": result.ID,
+		})
+	}
+}
+
+// DeleteBlog -> deletes blog based on id
+func DeleteBlog(ctx *fiber.Ctx) {
+	id := ctx.Params("id")
+	docID, _ := primitive.ObjectIDFromHex(id)
+	result := models.Blog{}
+	filter := bson.M{"_id": docID}
+	err := collectionBlogs.FindOneAndDelete(context.Background(), filter).Decode(&result)
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		ctx.Status(200).JSON(fiber.Map{
+			"deleted_id": result.ID,
+		})
+	}
+}
