@@ -25,6 +25,9 @@ func Router() *fiber.App {
 	})
 
 	app.Get("/ping", api.Ping)
+	app.Get("/blog", api.GetAllBlogs)
+	app.Get("/blog/:id", api.GetBlog)
+	app.Post("/blog", api.InsertBlog)
 
 	return app
 }
